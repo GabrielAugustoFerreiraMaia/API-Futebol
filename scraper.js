@@ -5,33 +5,50 @@ async function getTabelaBrasileirao() {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
 
-    await page.goto(url, { waitUntil: 'networkidle2' });
+    try {
+        await page.goto(url, { waitUntil: 'networkidle2' });
 
-    // Aguarda a tabela ser carregada
-    await page.waitForSelector('.tabela__equipes.tabela__equipes--com-borda');
-
-    const data = await page.evaluate(() => {
-        const rows = Array.from(document.querySelectorAll('.tabela__equipes.tabela__equipes--com-borda tbody tr'));
-        return rows.map(row => {
-            const cols = row.querySelectorAll('td');
-            return {
-                posicao: cols[0]?.innerText || null,
-                time: cols[1]?.innerText || null,
-                pontos: cols[2]?.innerText || null,
-                jogos: cols[3]?.innerText || null,
-                vitorias: cols[4]?.innerText || null,
-                empates: cols[5]?.innerText || null,
-                derrotas: cols[6]?.innerText || null,
-                golsPro: cols[7]?.innerText || null,
-                golsContra: cols[8]?.innerText || null,
-                saldo: cols[9]?.innerText || null,
-                ultimosJogos: cols[10]?.innerText || null,
-            };
+        // Captura os nomes dos times e suas posições
+        const times = await page.evaluate(() => {
+            return Array.from(document.querySelectorAll('.tabela__equipes tbody tr')).map(row => {
+                const cols = row.querySelectorAll('td');
+                return {
+                    posicao: cols[0]?.innerText.trim(),
+                    time: cols[1]?.innerText.trim(),
+                };
+            });
         });
-    });
 
-    await browser.close();
-    return data;
+        // Captura as estatísticas
+        const estatisticas = await page.evaluate(() => {
+            return Array.from(document.querySelectorAll('.tabela__pontos tbody tr')).map(row => {
+                const cols = row.querySelectorAll('td');
+                return {
+                    pontos: cols[0]?.innerText.trim(),
+                    jogos: cols[1]?.innerText.trim(),
+                    vitorias: cols[2]?.innerText.trim(),
+                    empates: cols[3]?.innerText.trim(),
+                    derrotas: cols[4]?.innerText.trim(),
+                    golsPro: cols[5]?.innerText.trim(),
+                    golsContra: cols[6]?.innerText.trim(),
+                    saldoGols: cols[7]?.innerText.trim(),
+                };
+            });
+        });
+
+        // Combina os dados de times e estatísticas
+        const data = times.map((time, index) => ({
+            ...time,
+            ...estatisticas[index],
+        }));
+
+        await browser.close();
+        return data;
+    } catch (error) {
+        console.error('Erro ao obter dados:', error);
+        await browser.close();
+        return { error: 'Erro ao obter dados' };
+    }
 }
 
 module.exports = getTabelaBrasileirao;
