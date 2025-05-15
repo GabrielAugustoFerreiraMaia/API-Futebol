@@ -4,6 +4,8 @@ const {
     getArtilharia,
     getTabelaBrasileiraoB,
     getArtilhariaB,
+    getJogosRodadaA,
+    getJogosRodadaB,
 } = require('./scraper');
 
 const app = express();
@@ -28,6 +30,15 @@ app.get('/api/serie-a/artilharia', async (req, res) => {
     }
 });
 
+app.get('/api/serie-a/jogos', async (req, res) => {
+    try {
+        const jogos = await getJogosRodadaA();
+        res.json(jogos);
+    } catch (err) {
+        res.status(500).json({ error: 'Erro ao obter dados dos jogos da Série A' });
+    }
+});
+
 // Rotas para Série B
 app.get('/api/serie-b/tabela', async (req, res) => {
     try {
@@ -44,6 +55,15 @@ app.get('/api/serie-b/artilharia', async (req, res) => {
         res.json(artilhariaB);
     } catch (err) {
         res.status(500).json({ error: 'Erro ao obter dados da artilharia da Série B' });
+    }
+});
+
+app.get('/api/serie-b/jogos', async (req, res) => {
+    try {
+        const jogosB = await getJogosRodadaB();
+        res.json(jogosB);
+    } catch (err) {
+        res.status(500).json({ error: 'Erro ao obter dados dos jogos da Série B' });
     }
 });
 

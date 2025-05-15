@@ -175,9 +175,100 @@ async function getArtilhariaB() {
     }
 }
 
+// Funções para capturar os jogos da rodada
+async function getJogosRodadaA() {
+    const url = 'https://ge.globo.com/futebol/brasileirao-serie-a/';
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+
+    try {
+        await page.goto(url, { waitUntil: 'networkidle2' });
+
+        // Captura os jogos da rodada
+        const jogos = await page.evaluate(() => {
+            return Array.from(document.querySelectorAll('.lista-jogos__jogo')).map(item => {
+                const timeMandante = item.querySelector('.placar__equipes--mandante .equipes__nome')?.innerText.trim();
+                const timeVisitante = item.querySelector('.placar__equipes--visitante .equipes__nome')?.innerText.trim();
+                
+                // Tenta capturar o placar, se não existir, usa 'N/A'
+                const placarMandante = item.querySelector('.placar-box__valor--mandante')?.innerText.trim() || 'N/A';
+                const placarVisitante = item.querySelector('.placar-box__valor--visitante')?.innerText.trim() || 'N/A';
+
+                const local = item.querySelector('.jogo__informacoes--local')?.innerText.trim();
+                const dataJogo = item.querySelector('.jogo__informacoes--data')?.innerText.trim();
+                const horaJogo = item.querySelector('.jogo__informacoes--hora')?.innerText.trim();
+
+                return {
+                    timeMandante,
+                    timeVisitante,
+                    placarMandante,
+                    placarVisitante,
+                    local,
+                    dataJogo,
+                    horaJogo,
+                };
+            });
+        });
+
+        console.log('Jogos encontrados:', jogos); // Log para depuração
+        await browser.close();
+        return jogos;
+    } catch (error) {
+        console.error('Erro ao obter dados dos jogos da Série A:', error);
+        await browser.close();
+        return { error: 'Erro ao obter dados dos jogos da Série A' };
+    }
+}
+
+async function getJogosRodadaB() {
+    const url = 'https://ge.globo.com/futebol/brasileirao-serie-b/';
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+
+    try {
+        await page.goto(url, { waitUntil: 'networkidle2' });
+
+        // Captura os jogos da rodada
+        const jogos = await page.evaluate(() => {
+            return Array.from(document.querySelectorAll('.lista-jogos__jogo')).map(item => {
+                const timeMandante = item.querySelector('.placar__equipes--mandante .equipes__nome')?.innerText.trim();
+                const timeVisitante = item.querySelector('.placar__equipes--visitante .equipes__nome')?.innerText.trim();
+                
+                // Tenta capturar o placar, se não existir, usa 'N/A'
+                const placarMandante = item.querySelector('.placar-box__valor--mandante')?.innerText.trim() || 'N/A';
+                const placarVisitante = item.querySelector('.placar-box__valor--visitante')?.innerText.trim() || 'N/A';
+
+                const local = item.querySelector('.jogo__informacoes--local')?.innerText.trim();
+                const dataJogo = item.querySelector('.jogo__informacoes--data')?.innerText.trim();
+                const horaJogo = item.querySelector('.jogo__informacoes--hora')?.innerText.trim();
+
+                return {
+                    timeMandante,
+                    timeVisitante,
+                    placarMandante,
+                    placarVisitante,
+                    local,
+                    dataJogo,
+                    horaJogo,
+                };
+            });
+        });
+
+        console.log('Jogos encontrados:', jogos); // Log para depuração
+        await browser.close();
+        return jogos;
+    } catch (error) {
+        console.error('Erro ao obter dados dos jogos da Série A:', error);
+        await browser.close();
+        return { error: 'Erro ao obter dados dos jogos da Série A' };
+    }
+}
+
 module.exports = {
     getTabelaBrasileirao,
     getArtilharia,
     getTabelaBrasileiraoB,
     getArtilhariaB,
+    getJogosRodadaA,
+    getJogosRodadaB,
 };
