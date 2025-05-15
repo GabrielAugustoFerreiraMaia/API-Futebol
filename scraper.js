@@ -51,4 +51,40 @@ async function getTabelaBrasileirao() {
     }
 }
 
-module.exports = getTabelaBrasileirao;
+async function getArtilharia() {
+    const url = 'https://ge.globo.com/futebol/brasileirao-serie-a/';
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+
+    try {
+        await page.goto(url, { waitUntil: 'networkidle2' });
+
+        // Captura a artilharia
+        const artilharia = await page.evaluate(() => {
+            return Array.from(document.querySelectorAll('.ranking-item-wrapper')).map(item => {
+                const jogadorFoto = item.querySelector('.jogador-foto img')?.src;
+                const jogadorEscudo = item.querySelector('.jogador-escudo img')?.src;
+                const jogadorNome = item.querySelector('.jogador-nome')?.innerText.trim();
+                const jogadorPosicao = item.querySelector('.jogador-posicao')?.innerText.trim();
+                const jogadorGols = item.querySelector('.jogador-gols')?.innerText.trim();
+
+                return {
+                    foto: jogadorFoto,
+                    escudo: jogadorEscudo,
+                    nome: jogadorNome,
+                    posicao: jogadorPosicao,
+                    gols: jogadorGols,
+                };
+            });
+        });
+
+        await browser.close();
+        return artilharia;
+    } catch (error) {
+        console.error('Erro ao obter dados da artilharia:', error);
+        await browser.close();
+        return { error: 'Erro ao obter dados da artilharia' };
+    }
+}
+
+module.exports = { getTabelaBrasileirao, getArtilharia };
