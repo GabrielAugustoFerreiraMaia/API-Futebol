@@ -47,8 +47,8 @@ Este projeto é uma API criada com **Node.js**, **Express** e **Puppeteer** que 
 
 ### 1. Clone o projeto
 ```bash
-git clone https://github.com/seu-usuario/nome-do-repositorio.git
-cd nome-do-repositorio
+git clone [https://github.com/seu-usuario/nome-do-repositorio.git](https://github.com/GabrielAugustoFerreiraMaia/API-Futebol)
+cd API-Futebol
 ```
 
 ### 2. Instale as dependências
@@ -96,7 +96,7 @@ node server.js
 ## 📬 Contato
 
 Desenvolvido por **Gabriel Augusto**  
-[LinkedIn](https://www.linkedin.com/in/gabrielaugustoferreiramaia/) • gabrielaugusto.dev@gmail.com
+[LinkedIn](https://www.linkedin.com/in/gabrielaugustoferreiramaia/) 
 
 ---
 
